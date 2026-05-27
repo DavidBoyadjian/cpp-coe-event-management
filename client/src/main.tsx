@@ -28,7 +28,7 @@ function App() {
 
   const loadEvents = async () => {
     try {
-      const res = await fetch("http://localhost:3002/api/events");
+      const res = await fetch("https://cpp-coe-event-management.onrender.com");
 
       if (!res.ok) {
         throw new Error("Failed to fetch events");
@@ -166,8 +166,8 @@ function App() {
     try {
       const url =
         editingId === null
-          ? "http://localhost:3002/api/events"
-          : `http://localhost:3002/api/events/${editingId}`;
+          ? "https://cpp-coe-event-management.onrender.com"
+          : `https://cpp-coe-event-management.onrender.com${editingId}`;
 
       const method = editingId === null ? "POST" : "PUT";
 
@@ -206,7 +206,7 @@ function App() {
 
   const handleDeleteEvent = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:3002/api/events/${id}`, {
+      const res = await fetch(`https://cpp-coe-event-management.onrender.com`, {
         method: "DELETE",
       });
 
