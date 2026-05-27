@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import type { EventItem } from "../../shared/schema";
 
+const API_URL = "https://cpp-coe-event-management.onrender.com/api/events";
+
 function App() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +30,7 @@ function App() {
 
   const loadEvents = async () => {
     try {
-      const res = await fetch("https://cpp-coe-event-management.onrender.com");
+      const res = await fetch(API_URL);
 
       if (!res.ok) {
         throw new Error("Failed to fetch events");
@@ -164,11 +166,7 @@ function App() {
     };
 
     try {
-      const url =
-        editingId === null
-          ? "https://cpp-coe-event-management.onrender.com"
-          : `https://cpp-coe-event-management.onrender.com${editingId}`;
-
+      const url = editingId === null ? API_URL : `${API_URL}/${editingId}`;
       const method = editingId === null ? "POST" : "PUT";
 
       const res = await fetch(url, {
@@ -206,7 +204,7 @@ function App() {
 
   const handleDeleteEvent = async (id: number) => {
     try {
-      const res = await fetch(`https://cpp-coe-event-management.onrender.com`, {
+      const res = await fetch(`${API_URL}/${id}`, {
         method: "DELETE",
       });
 
