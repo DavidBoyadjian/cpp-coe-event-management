@@ -373,7 +373,7 @@ function App() {
                 <th style={thStyle}>Days Left</th>
                 <th style={thStyle}>Location</th>
                 <th style={thStyle}>Host</th>
-                <th style={thStyle}>Room</th>
+                <th style={thStyle}>Room Reserved</th>
                 <th style={thStyle}>Catering Needed</th>
                 <th style={thStyle}>Catering Ordered</th>
                 <th style={thStyle}>Status</th>
@@ -383,77 +383,100 @@ function App() {
             </thead>
 
             <tbody>
-              {sortedEvents.map((e) => (
-                <tr key={e.id}>
-                  <td style={tdStyle}>{e.eventName}</td>
+              {sortedEvents.map((e, index) => {
+                const previousEvent = sortedEvents[index - 1];
 
-                  <td style={tdStyle}>{formatDate(e.date)}</td>
+                const isPastEvent = (date: string) => {
+                  const today = new Date();
+                  const eventDate = new Date(date + "T00:00:00");
 
-                  <td style={tdStyle}>{getDaysAway(e.date)}</td>
+                  today.setHours(0, 0, 0, 0);
+                  eventDate.setHours(0, 0, 0, 0);
 
-                  <td style={tdStyle}>{e.location || "-"}</td>
+                  return eventDate.getTime() < today.getTime();
+                };
 
-                  <td style={tdStyle}>{e.host || "-"}</td>
+                const shouldShowDivider =
+                  index > 0 &&
+                  previousEvent &&
+                  isPastEvent(previousEvent.date) &&
+                  !isPastEvent(e.date);
 
-                  <td
-                    style={{
-                      ...tdStyle,
-                      color: e.roomReserved ? "green" : "red",
-                      fontWeight: 700,
-                    }}
+                return (
+                  <tr
+                    key={e.id}
+                    style={shouldShowDivider ? dividerRowStyle : undefined}
                   >
-                    {e.roomReserved ? "Yes" : "No"}
-                  </td>
+                    <td style={tdStyle}>{e.eventName}</td>
 
-                  <td
-                    style={{
-                      ...tdStyle,
-                      color: e.cateringNeeded ? "green" : "red",
-                      fontWeight: 700,
-                    }}
-                  >
-                    {e.cateringNeeded ? "Yes" : "No"}
-                  </td>
+                    <td style={tdStyle}>{formatDate(e.date)}</td>
 
-                  <td
-                    style={{
-                      ...tdStyle,
-                      color: e.cateringNeeded
+                    <td style={tdStyle}>{getDaysAway(e.date)}</td>
+
+                    <td style={tdStyle}>{e.location || "-"}</td>
+
+                    <td style={tdStyle}>{e.host || "-"}</td>
+
+                    <td
+                      style={{
+                        ...tdStyle,
+                        color: e.roomReserved ? "green" : "red",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {e.roomReserved ? "Yes" : "No"}
+                    </td>
+
+                    <td
+                      style={{
+                        ...tdStyle,
+                        color: e.cateringNeeded ? "green" : "red",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {e.cateringNeeded ? "Yes" : "No"}
+                    </td>
+
+                    <td
+                      style={{
+                        ...tdStyle,
+                        color: e.cateringNeeded
+                          ? e.cateringOrdered
+                            ? "green"
+                            : "red"
+                          : "#777",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {e.cateringNeeded
                         ? e.cateringOrdered
-                          ? "green"
-                          : "red"
-                        : "#777",
-                      fontWeight: 700,
-                    }}
-                  >
-                    {e.cateringNeeded
-                      ? e.cateringOrdered
-                        ? "Yes"
-                        : "No"
-                      : "-"}
-                  </td>
+                          ? "Yes"
+                          : "No"
+                        : "-"}
+                    </td>
 
-                  <td style={tdStyle}>{e.status || "-"}</td>
+                    <td style={tdStyle}>{e.status || "-"}</td>
 
-                  <td style={tdStyle}>{e.description || "-"}</td>
+                    <td style={tdStyle}>{e.description || "-"}</td>
 
-                  <td style={tdStyle}>
-                    <button
-                      style={smallButtonStyle}
-                      onClick={() => handleEditEvent(e)}
-                    >
-                      Edit
-                    </button>
+                    <td style={tdStyle}>
+                      <button
+                        style={smallButtonStyle}
+                        onClick={() => handleEditEvent(e)}
+                      >
+                        Edit
+                      </button>
 
-                    <button
-                      style={deleteButtonStyle}
-                      onClick={() => handleDeleteEvent(e.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      <button
+                        style={deleteButtonStyle}
+                        onClick={() => handleDeleteEvent(e.id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}
@@ -683,6 +706,10 @@ const deleteButtonStyle: React.CSSProperties = {
   backgroundColor: "white",
   borderRadius: "6px",
   cursor: "pointer",
+};
+
+const dividerRowStyle: React.CSSProperties = {
+  borderTop: `6px solid ${gold}`,
 };
 
 const root = document.getElementById("root");
