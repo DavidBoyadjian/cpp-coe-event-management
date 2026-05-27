@@ -4,9 +4,10 @@
   "description": "Event management system",
   "main": "server/index.js",
   "scripts": {
-    "server": "ts-node --files server/index.ts",
-    "dev": "vite"
-  },
+  "server": "ts-node --files server/index.ts",
+  "dev": "vite",
+  "build": "vite build"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
