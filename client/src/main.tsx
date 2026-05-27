@@ -92,30 +92,6 @@ function App() {
     });
   };
 
-  const isMissingValue = (value: string | boolean | undefined) => {
-    return (
-      value === "-" ||
-      value === "No" ||
-      value === false ||
-      value === undefined ||
-      value === ""
-    );
-  };
-
-  const isEventComplete = (event: EventItem) => {
-    const hasLocation = !!event.location;
-    const hasHost = !!event.host;
-    const hasStatus = !!event.status;
-    const hasDescription = !!event.description;
-    const hasRoom = event.roomReserved === true;
-
-    const cateringOk =
-      event.cateringNeeded === false ||
-      (event.cateringNeeded === true && event.cateringOrdered === true);
-
-    return hasLocation && hasHost && hasStatus && hasDescription && hasRoom && cateringOk;
-  };
-
   const sortedEvents = [...events].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
@@ -297,12 +273,47 @@ function App() {
           </h2>
 
           <div style={formGridStyle}>
-            <input style={inputStyle} placeholder="Event Name" value={eventName} onChange={(e) => setEventName(e.target.value)} />
-            <input style={inputStyle} type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-            <input style={inputStyle} placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
-            <input style={inputStyle} placeholder="Host" value={host} onChange={(e) => setHost(e.target.value)} />
-            <input style={inputStyle} placeholder="Status" value={status} onChange={(e) => setStatus(e.target.value)} />
-            <input style={inputStyle} placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+            <input
+              style={inputStyle}
+              placeholder="Event Name"
+              value={eventName}
+              onChange={(e) => setEventName(e.target.value)}
+            />
+
+            <input
+              style={inputStyle}
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
+
+            <input
+              style={inputStyle}
+              placeholder="Location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
+
+            <input
+              style={inputStyle}
+              placeholder="Host"
+              value={host}
+              onChange={(e) => setHost(e.target.value)}
+            />
+
+            <input
+              style={inputStyle}
+              placeholder="Status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            />
+
+            <input
+              style={inputStyle}
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
           </div>
 
           <div style={checkboxRowStyle}>
@@ -374,48 +385,21 @@ function App() {
             <tbody>
               {sortedEvents.map((e) => (
                 <tr key={e.id}>
-                  <td
-                    style={{
-                      ...tdStyle,
-
-                      ...(getDaysAway(e.date) === "Past due"
-                        ? pastDueEventStyle
-                        : {}),
-
-                      ...(isEventComplete(e)
-                        ? completeEventStyle
-                        : {}),
-                    }}
-                  >
-                    {e.eventName}
-                  </td>
+                  <td style={tdStyle}>{e.eventName}</td>
 
                   <td style={tdStyle}>{formatDate(e.date)}</td>
 
                   <td style={tdStyle}>{getDaysAway(e.date)}</td>
 
-                  <td
-                    style={{
-                      ...tdStyle,
-                      ...(isMissingValue(e.location) ? missingCellStyle : {}),
-                    }}
-                  >
-                    {e.location || "-"}
-                  </td>
+                  <td style={tdStyle}>{e.location || "-"}</td>
+
+                  <td style={tdStyle}>{e.host || "-"}</td>
 
                   <td
                     style={{
                       ...tdStyle,
-                      ...(isMissingValue(e.host) ? missingCellStyle : {}),
-                    }}
-                  >
-                    {e.host || "-"}
-                  </td>
-
-                  <td
-                    style={{
-                      ...tdStyle,
-                      ...(e.roomReserved ? {} : missingCellStyle),
+                      color: e.roomReserved ? "green" : "red",
+                      fontWeight: 700,
                     }}
                   >
                     {e.roomReserved ? "Yes" : "No"}
@@ -424,7 +408,8 @@ function App() {
                   <td
                     style={{
                       ...tdStyle,
-                      ...(e.cateringNeeded ? {} : missingCellStyle),
+                      color: e.cateringNeeded ? "green" : "red",
+                      fontWeight: 700,
                     }}
                   >
                     {e.cateringNeeded ? "Yes" : "No"}
@@ -433,29 +418,24 @@ function App() {
                   <td
                     style={{
                       ...tdStyle,
-                      ...(e.cateringOrdered ? {} : missingCellStyle),
+                      color: e.cateringNeeded
+                        ? e.cateringOrdered
+                          ? "green"
+                          : "red"
+                        : "#777",
+                      fontWeight: 700,
                     }}
                   >
-                    {e.cateringOrdered ? "Yes" : "No"}
+                    {e.cateringNeeded
+                      ? e.cateringOrdered
+                        ? "Yes"
+                        : "No"
+                      : "-"}
                   </td>
 
-                  <td
-                    style={{
-                      ...tdStyle,
-                      ...(isMissingValue(e.status) ? missingCellStyle : {}),
-                    }}
-                  >
-                    {e.status || "-"}
-                  </td>
+                  <td style={tdStyle}>{e.status || "-"}</td>
 
-                  <td
-                    style={{
-                      ...tdStyle,
-                      ...(isMissingValue(e.description) ? missingCellStyle : {}),
-                    }}
-                  >
-                    {e.description || "-"}
-                  </td>
+                  <td style={tdStyle}>{e.description || "-"}</td>
 
                   <td style={tdStyle}>
                     <button
@@ -684,20 +664,6 @@ const tdStyle: React.CSSProperties = {
   padding: "12px",
   borderBottom: "1px solid #d9d9d9",
   borderRight: "1px solid #e5e5e5",
-};
-
-const pastDueEventStyle: React.CSSProperties = {
-  backgroundColor: "#f6e7a8",
-  fontWeight: 700,
-};
-
-const missingCellStyle: React.CSSProperties = {
-  backgroundColor: "#fde8e8",
-};
-
-const completeEventStyle: React.CSSProperties = {
-  backgroundColor: "#dcfce7",
-  fontWeight: 700,
 };
 
 const smallButtonStyle: React.CSSProperties = {
