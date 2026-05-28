@@ -23,7 +23,7 @@ function App() {
   const [description, setDescription] = useState("");
 
   const [hostFilter, setHostFilter] = useState("");
-  const [audienceFilter, setAudienceFilter] = useState("");
+  const [audienceFilter, setAudienceFilter] = useState<string[]>([]);
   const [roomFilter, setRoomFilter] = useState("");
   const [cateringNeededFilter, setCateringNeededFilter] = useState("");
   const [cateringOrderedFilter, setCateringOrderedFilter] = useState("");
@@ -79,9 +79,17 @@ function App() {
     );
   };
 
+  const handleAudienceFilterChange = (value: string) => {
+    setAudienceFilter((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
+  };
+
   const clearFilters = () => {
     setHostFilter("");
-    setAudienceFilter("");
+    setAudienceFilter([]);
     setRoomFilter("");
     setCateringNeededFilter("");
     setCateringOrderedFilter("");
@@ -135,7 +143,8 @@ function App() {
     const matchesHost = hostFilter === "" || event.host === hostFilter;
 
     const matchesAudience =
-      audienceFilter === "" || (event.audience ?? "").includes(audienceFilter);
+      audienceFilter.length === 0 ||
+      audienceFilter.some((item) => (event.audience ?? "").includes(item));
 
     const matchesRoom =
       roomFilter === "" ||
@@ -479,18 +488,54 @@ function App() {
             <option value="Other">Other</option>
           </select>
 
-          <select
-            style={filterInputStyle}
-            value={audienceFilter}
-            onChange={(e) => setAudienceFilter(e.target.value)}
-          >
-            <option value="">All Audiences</option>
-            <option value="Students">Students</option>
-            <option value="SAB">SAB</option>
-            <option value="DLB">DLB</option>
-            <option value="Faculty/Staff">Faculty/Staff</option>
-            <option value="Other">Other</option>
-          </select>
+          <div style={filterAudienceBoxStyle}>
+            <strong>Audience Filter</strong>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={audienceFilter.includes("Students")}
+                onChange={() => handleAudienceFilterChange("Students")}
+              />
+              Students
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={audienceFilter.includes("SAB")}
+                onChange={() => handleAudienceFilterChange("SAB")}
+              />
+              SAB
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={audienceFilter.includes("DLB")}
+                onChange={() => handleAudienceFilterChange("DLB")}
+              />
+              DLB
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={audienceFilter.includes("Faculty/Staff")}
+                onChange={() => handleAudienceFilterChange("Faculty/Staff")}
+              />
+              Faculty/Staff
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={audienceFilter.includes("Other")}
+                onChange={() => handleAudienceFilterChange("Other")}
+              />
+              Other
+            </label>
+          </div>
 
           <select
             style={filterInputStyle}
@@ -849,6 +894,15 @@ const filterInputStyle: React.CSSProperties = {
   border: "1px solid #c7c7c7",
 };
 
+const filterAudienceBoxStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "6px",
+  padding: "10px",
+  border: "1px solid #c7c7c7",
+  borderRadius: "8px",
+};
+
 const clearFilterButtonStyle: React.CSSProperties = {
   backgroundColor: "white",
   color: green,
@@ -909,7 +963,7 @@ const dividerRowStyle: React.CSSProperties = {
 };
 
 const pastEventRowStyle: React.CSSProperties = {
-  backgroundColor: "#c3c4c8",
+  backgroundColor: "#cfcfcf",
 };
 
 const root = document.getElementById("root");
