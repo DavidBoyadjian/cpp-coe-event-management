@@ -86,8 +86,9 @@ function App() {
     const formattedDate = new Date(dateString + "T00:00:00");
 
     return formattedDate.toLocaleDateString("en-US", {
-      month: "2-digit",
-      day: "2-digit",
+      weekday: "long",
+      month: "long",
+      day: "numeric",
       year: "numeric",
     });
   };
@@ -368,8 +369,8 @@ function App() {
           <table style={tableStyle}>
             <thead>
               <tr>
-                <th style={thStyle}>Event</th>
                 <th style={thStyle}>Date</th>
+                <th style={thStyle}>Event</th>
                 <th style={thStyle}>Days Left</th>
                 <th style={thStyle}>Location</th>
                 <th style={thStyle}>Host</th>
@@ -407,9 +408,9 @@ function App() {
                     key={e.id}
                     style={shouldShowDivider ? dividerRowStyle : undefined}
                   >
-                    <td style={tdStyle}>{e.eventName}</td>
-
                     <td style={tdStyle}>{formatDate(e.date)}</td>
+                    
+                    <td style={tdStyle}>{e.eventName}</td>
 
                     <td style={tdStyle}>{getDaysAway(e.date)}</td>
 
