@@ -5,19 +5,25 @@ import { pool } from "./db";
 const router = express.Router();
 
 router.get("/events", async (_req: Request, res: Response) => {
-  const result = await pool.query(`
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS events (
       id BIGINT PRIMARY KEY,
       event_name TEXT NOT NULL,
       date TEXT NOT NULL,
       location TEXT,
       host TEXT,
+      audience TEXT,
       room_reserved BOOLEAN DEFAULT false,
       catering_needed BOOLEAN DEFAULT false,
       catering_ordered BOOLEAN DEFAULT false,
       status TEXT,
       description TEXT
     );
+  `);
+
+  await pool.query(`
+    ALTER TABLE events
+    ADD COLUMN IF NOT EXISTS audience TEXT;
   `);
 
   const events = await pool.query(`
@@ -27,6 +33,7 @@ router.get("/events", async (_req: Request, res: Response) => {
       date,
       location,
       host,
+      audience,
       room_reserved AS "roomReserved",
       catering_needed AS "cateringNeeded",
       catering_ordered AS "cateringOrdered",
@@ -43,23 +50,10 @@ router.post("/events", async (req: Request, res: Response) => {
   const event = req.body;
 
   if (!event.eventName || !event.date) {
-    return res.status(400).json({ error: "Event name and date are required" });
+    return res.status(400).json({
+      error: "Event name and date are required",
+    });
   }
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS events (
-      id BIGINT PRIMARY KEY,
-      event_name TEXT NOT NULL,
-      date TEXT NOT NULL,
-      location TEXT,
-      host TEXT,
-      room_reserved BOOLEAN DEFAULT false,
-      catering_needed BOOLEAN DEFAULT false,
-      catering_ordered BOOLEAN DEFAULT false,
-      status TEXT,
-      description TEXT
-    );
-  `);
 
   const result = await pool.query(
     `
@@ -69,19 +63,21 @@ router.post("/events", async (req: Request, res: Response) => {
       date,
       location,
       host,
+      audience,
       room_reserved,
       catering_needed,
       catering_ordered,
       status,
       description
     )
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
     RETURNING 
       id,
       event_name AS "eventName",
       date,
       location,
       host,
+      audience,
       room_reserved AS "roomReserved",
       catering_needed AS "cateringNeeded",
       catering_ordered AS "cateringOrdered",
@@ -94,6 +90,7 @@ router.post("/events", async (req: Request, res: Response) => {
       event.date,
       event.location,
       event.host,
+      event.audience,
       event.roomReserved,
       event.cateringNeeded,
       event.cateringOrdered,
@@ -117,18 +114,20 @@ router.put("/events/:id", async (req: Request, res: Response) => {
       date = $2,
       location = $3,
       host = $4,
-      room_reserved = $5,
-      catering_needed = $6,
-      catering_ordered = $7,
-      status = $8,
-      description = $9
-    WHERE id = $10
+      audience = $5,
+      room_reserved = $6,
+      catering_needed = $7,
+      catering_ordered = $8,
+      status = $9,
+      description = $10
+    WHERE id = $11
     RETURNING 
       id,
       event_name AS "eventName",
       date,
       location,
       host,
+      audience,
       room_reserved AS "roomReserved",
       catering_needed AS "cateringNeeded",
       catering_ordered AS "cateringOrdered",
@@ -140,6 +139,7 @@ router.put("/events/:id", async (req: Request, res: Response) => {
       event.date,
       event.location,
       event.host,
+      event.audience,
       event.roomReserved,
       event.cateringNeeded,
       event.cateringOrdered,
@@ -150,7 +150,9 @@ router.put("/events/:id", async (req: Request, res: Response) => {
   );
 
   if (result.rows.length === 0) {
-    return res.status(404).json({ error: "Event not found" });
+    return res.status(404).json({
+      error: "Event not found",
+    });
   }
 
   res.json(result.rows[0]);
@@ -165,10 +167,14 @@ router.delete("/events/:id", async (req: Request, res: Response) => {
   );
 
   if (result.rows.length === 0) {
-    return res.status(404).json({ error: "Event not found" });
+    return res.status(404).json({
+      error: "Event not found",
+    });
   }
 
-  res.json({ message: "Event deleted" });
+  res.json({
+    message: "Event deleted",
+  });
 });
 
 export = router;
