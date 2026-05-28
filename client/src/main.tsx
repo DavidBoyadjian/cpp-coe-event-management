@@ -406,7 +406,10 @@ function App() {
                 return (
                   <tr
                     key={e.id}
-                    style={shouldShowDivider ? dividerRowStyle : undefined}
+                    style={{
+                  ...(isPastEvent(e.date) ? pastEventRowStyle : {}),
+                  ...(shouldShowDivider ? dividerRowStyle : {}),
+                    }}
                   >
                     <td style={tdStyle}>{formatDate(e.date)}</td>
                     
@@ -711,6 +714,10 @@ const deleteButtonStyle: React.CSSProperties = {
 
 const dividerRowStyle: React.CSSProperties = {
   borderTop: `6px solid ${gold}`,
+};
+
+const pastEventRowStyle: React.CSSProperties = {
+  backgroundColor: "#cfcfcf",
 };
 
 const root = document.getElementById("root");
