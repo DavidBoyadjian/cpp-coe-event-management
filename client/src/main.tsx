@@ -108,7 +108,7 @@ function App() {
       (eventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
     );
 
-    return days >= 0 && days <= 10;
+    return days >= 0 && days <= 15;
   });
 
   const completedEvents = events.filter((event) => {
@@ -243,12 +243,12 @@ function App() {
       <div style={dashboardGridStyle}>
         <div style={cardStyle}>
           <h2 style={sectionTitleStyle}>
-            Upcoming Events (Days Left)
+            Upcoming Events
           </h2>
 
           {upcomingEventsWithin10Days.length === 0 ? (
             <p style={emptyTextStyle}>
-              No events within the next 10 days.
+              No events within the next 15 days.
             </p>
           ) : (
             <div style={daysListStyle}>
