@@ -856,7 +856,7 @@ const dividerRowStyle: React.CSSProperties = {
 };
 
 const pastEventRowStyle: React.CSSProperties = {
-  backgroundColor: "#c1c2c3",
+  backgroundColor: "#d0d2d3",
 };
 
 const root = document.getElementById("root");
