@@ -15,6 +15,7 @@ function App() {
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
   const [host, setHost] = useState("");
+  const [audience, setAudience] = useState("");
   const [roomReserved, setRoomReserved] = useState(false);
   const [cateringNeeded, setCateringNeeded] = useState(false);
   const [cateringOrdered, setCateringOrdered] = useState(false);
@@ -56,6 +57,7 @@ function App() {
     setDate("");
     setLocation("");
     setHost("");
+    setAudience("");
     setRoomReserved(false);
     setCateringNeeded(false);
     setCateringOrdered(false);
@@ -82,6 +84,16 @@ function App() {
     return `${days} days`;
   };
 
+  const isPastEvent = (date: string) => {
+    const today = new Date();
+    const eventDate = new Date(date + "T00:00:00");
+
+    today.setHours(0, 0, 0, 0);
+    eventDate.setHours(0, 0, 0, 0);
+
+    return eventDate.getTime() < today.getTime();
+  };
+
   const formatDate = (dateString: string) => {
     const formattedDate = new Date(dateString + "T00:00:00");
 
@@ -97,7 +109,7 @@ function App() {
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
-  const upcomingEventsWithin10Days = sortedEvents.filter((event) => {
+  const upcomingEventsWithin15Days = sortedEvents.filter((event) => {
     const today = new Date();
     const eventDate = new Date(event.date + "T00:00:00");
 
@@ -111,16 +123,7 @@ function App() {
     return days >= 0 && days <= 15;
   });
 
-  const completedEvents = events.filter((event) => {
-    const today = new Date();
-    const eventDate = new Date(event.date + "T00:00:00");
-
-    today.setHours(0, 0, 0, 0);
-    eventDate.setHours(0, 0, 0, 0);
-
-    return eventDate.getTime() < today.getTime();
-  }).length;
-
+  const completedEvents = events.filter((event) => isPastEvent(event.date)).length;
   const eventsLeft = events.length - completedEvents;
 
   const handleSubmitEvent = async () => {
@@ -135,6 +138,7 @@ function App() {
       date,
       location,
       host,
+      audience,
       roomReserved,
       cateringNeeded,
       cateringOrdered,
@@ -172,6 +176,7 @@ function App() {
     setDate(event.date);
     setLocation(event.location ?? "");
     setHost(event.host ?? "");
+    setAudience(event.audience ?? "");
     setRoomReserved(event.roomReserved ?? false);
     setCateringNeeded(event.cateringNeeded ?? false);
     setCateringOrdered(event.cateringOrdered ?? false);
@@ -242,26 +247,20 @@ function App() {
 
       <div style={dashboardGridStyle}>
         <div style={cardStyle}>
-          <h2 style={sectionTitleStyle}>
-            Upcoming Events
-          </h2>
+          <h2 style={sectionTitleStyle}>Upcoming Events</h2>
 
-          {upcomingEventsWithin10Days.length === 0 ? (
-            <p style={emptyTextStyle}>
-              No events within the next 15 days.
-            </p>
+          {upcomingEventsWithin15Days.length === 0 ? (
+            <p style={emptyTextStyle}>No events within the next 15 days.</p>
           ) : (
             <div style={daysListStyle}>
-              {upcomingEventsWithin10Days.map((event) => (
+              {upcomingEventsWithin15Days.map((event) => (
                 <div key={event.id} style={daysItemStyle}>
                   <div>
                     <strong>{event.eventName}</strong>
                     <p style={smallTextStyle}>{formatDate(event.date)}</p>
                   </div>
 
-                  <span style={badgeStyle}>
-                    {getDaysAway(event.date)}
-                  </span>
+                  <span style={badgeStyle}>{getDaysAway(event.date)}</span>
                 </div>
               ))}
             </div>
@@ -295,12 +294,29 @@ function App() {
               onChange={(e) => setLocation(e.target.value)}
             />
 
-            <input
+            <select
               style={inputStyle}
-              placeholder="Host"
               value={host}
               onChange={(e) => setHost(e.target.value)}
-            />
+            >
+              <option value="">Select Host</option>
+              <option value="CoE">CoE</option>
+              <option value="DLB">DLB</option>
+              <option value="Other">Other</option>
+            </select>
+
+            <select
+              style={inputStyle}
+              value={audience}
+              onChange={(e) => setAudience(e.target.value)}
+            >
+              <option value="">Select Audience</option>
+              <option value="Students">Students</option>
+              <option value="SAB">SAB</option>
+              <option value="DLB">DLB</option>
+              <option value="Faculty/Staff">Faculty/Staff</option>
+              <option value="Other">Other</option>
+            </select>
 
             <input
               style={inputStyle}
@@ -374,6 +390,7 @@ function App() {
                 <th style={thStyle}>Days Left</th>
                 <th style={thStyle}>Location</th>
                 <th style={thStyle}>Host</th>
+                <th style={thStyle}>Audience</th>
                 <th style={thStyle}>Room Reserved</th>
                 <th style={thStyle}>Catering Needed</th>
                 <th style={thStyle}>Catering Ordered</th>
@@ -387,16 +404,6 @@ function App() {
               {sortedEvents.map((e, index) => {
                 const previousEvent = sortedEvents[index - 1];
 
-                const isPastEvent = (date: string) => {
-                  const today = new Date();
-                  const eventDate = new Date(date + "T00:00:00");
-
-                  today.setHours(0, 0, 0, 0);
-                  eventDate.setHours(0, 0, 0, 0);
-
-                  return eventDate.getTime() < today.getTime();
-                };
-
                 const shouldShowDivider =
                   index > 0 &&
                   previousEvent &&
@@ -407,19 +414,16 @@ function App() {
                   <tr
                     key={e.id}
                     style={{
-                  ...(isPastEvent(e.date) ? pastEventRowStyle : {}),
-                  ...(shouldShowDivider ? dividerRowStyle : {}),
+                      ...(isPastEvent(e.date) ? pastEventRowStyle : {}),
+                      ...(shouldShowDivider ? dividerRowStyle : {}),
                     }}
                   >
                     <td style={tdStyle}>{formatDate(e.date)}</td>
-                    
                     <td style={tdStyle}>{e.eventName}</td>
-
                     <td style={tdStyle}>{getDaysAway(e.date)}</td>
-
                     <td style={tdStyle}>{e.location || "-"}</td>
-
                     <td style={tdStyle}>{e.host || "-"}</td>
+                    <td style={tdStyle}>{e.audience || "-"}</td>
 
                     <td
                       style={{
@@ -460,7 +464,6 @@ function App() {
                     </td>
 
                     <td style={tdStyle}>{e.status || "-"}</td>
-
                     <td style={tdStyle}>{e.description || "-"}</td>
 
                     <td style={tdStyle}>
@@ -717,7 +720,7 @@ const dividerRowStyle: React.CSSProperties = {
 };
 
 const pastEventRowStyle: React.CSSProperties = {
-  backgroundColor: "#cfcfcf",
+  backgroundColor: "#f3f4f6",
 };
 
 const root = document.getElementById("root");
