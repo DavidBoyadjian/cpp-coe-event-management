@@ -22,6 +22,12 @@ function App() {
   const [status, setStatus] = useState("");
   const [description, setDescription] = useState("");
 
+  const [hostFilter, setHostFilter] = useState("");
+  const [audienceFilter, setAudienceFilter] = useState("");
+  const [roomFilter, setRoomFilter] = useState("");
+  const [cateringNeededFilter, setCateringNeededFilter] = useState("");
+  const [cateringOrderedFilter, setCateringOrderedFilter] = useState("");
+
   const todayLong = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -63,6 +69,14 @@ function App() {
     setCateringOrdered(false);
     setStatus("");
     setDescription("");
+  };
+
+  const clearFilters = () => {
+    setHostFilter("");
+    setAudienceFilter("");
+    setRoomFilter("");
+    setCateringNeededFilter("");
+    setCateringOrderedFilter("");
   };
 
   const getDaysAway = (eventDate: string) => {
@@ -108,6 +122,36 @@ function App() {
   const sortedEvents = [...events].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
+
+  const filteredEvents = sortedEvents.filter((event) => {
+    const matchesHost = hostFilter === "" || event.host === hostFilter;
+
+    const matchesAudience =
+      audienceFilter === "" || event.audience === audienceFilter;
+
+    const matchesRoom =
+      roomFilter === "" ||
+      (roomFilter === "yes" && event.roomReserved === true) ||
+      (roomFilter === "no" && event.roomReserved !== true);
+
+    const matchesCateringNeeded =
+      cateringNeededFilter === "" ||
+      (cateringNeededFilter === "yes" && event.cateringNeeded === true) ||
+      (cateringNeededFilter === "no" && event.cateringNeeded !== true);
+
+    const matchesCateringOrdered =
+      cateringOrderedFilter === "" ||
+      (cateringOrderedFilter === "yes" && event.cateringOrdered === true) ||
+      (cateringOrderedFilter === "no" && event.cateringOrdered !== true);
+
+    return (
+      matchesHost &&
+      matchesAudience &&
+      matchesRoom &&
+      matchesCateringNeeded &&
+      matchesCateringOrdered
+    );
+  });
 
   const upcomingEventsWithin15Days = sortedEvents.filter((event) => {
     const today = new Date();
@@ -379,6 +423,70 @@ function App() {
       <div style={cardStyle}>
         <h2 style={sectionTitleStyle}>All Events</h2>
 
+        <div style={filterBoxStyle}>
+          <select
+            style={filterInputStyle}
+            value={hostFilter}
+            onChange={(e) => setHostFilter(e.target.value)}
+          >
+            <option value="">All Hosts</option>
+            <option value="CoE">CoE</option>
+            <option value="DLB">DLB</option>
+            <option value="Other">Other</option>
+          </select>
+
+          <select
+            style={filterInputStyle}
+            value={audienceFilter}
+            onChange={(e) => setAudienceFilter(e.target.value)}
+          >
+            <option value="">All Audiences</option>
+            <option value="Students">Students</option>
+            <option value="SAB">SAB</option>
+            <option value="DLB">DLB</option>
+            <option value="Faculty/Staff">Faculty/Staff</option>
+            <option value="Other">Other</option>
+          </select>
+
+          <select
+            style={filterInputStyle}
+            value={roomFilter}
+            onChange={(e) => setRoomFilter(e.target.value)}
+          >
+            <option value="">Room Reserved: All</option>
+            <option value="yes">Room Reserved: Yes</option>
+            <option value="no">Room Reserved: No</option>
+          </select>
+
+          <select
+            style={filterInputStyle}
+            value={cateringNeededFilter}
+            onChange={(e) => setCateringNeededFilter(e.target.value)}
+          >
+            <option value="">Catering Needed: All</option>
+            <option value="yes">Catering Needed: Yes</option>
+            <option value="no">Catering Needed: No</option>
+          </select>
+
+          <select
+            style={filterInputStyle}
+            value={cateringOrderedFilter}
+            onChange={(e) => setCateringOrderedFilter(e.target.value)}
+          >
+            <option value="">Catering Ordered: All</option>
+            <option value="yes">Catering Ordered: Yes</option>
+            <option value="no">Catering Ordered: No</option>
+          </select>
+
+          <button style={clearFilterButtonStyle} onClick={clearFilters}>
+            Clear Filters
+          </button>
+        </div>
+
+        <p style={filterCountStyle}>
+          Showing {filteredEvents.length} of {events.length} events
+        </p>
+
         {loading ? (
           <p>Loading...</p>
         ) : (
@@ -401,8 +509,8 @@ function App() {
             </thead>
 
             <tbody>
-              {sortedEvents.map((e, index) => {
-                const previousEvent = sortedEvents[index - 1];
+              {filteredEvents.map((e, index) => {
+                const previousEvent = filteredEvents[index - 1];
 
                 const shouldShowDivider =
                   index > 0 &&
@@ -675,6 +783,34 @@ const emptyTextStyle: React.CSSProperties = {
   color: "#777",
 };
 
+const filterBoxStyle: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(6, minmax(160px, 1fr))",
+  gap: "12px",
+  marginBottom: "12px",
+};
+
+const filterInputStyle: React.CSSProperties = {
+  padding: "10px",
+  borderRadius: "8px",
+  border: "1px solid #c7c7c7",
+};
+
+const clearFilterButtonStyle: React.CSSProperties = {
+  backgroundColor: "white",
+  color: green,
+  border: `1px solid ${green}`,
+  padding: "10px",
+  borderRadius: "8px",
+  cursor: "pointer",
+  fontWeight: 700,
+};
+
+const filterCountStyle: React.CSSProperties = {
+  color: "#555",
+  marginBottom: "16px",
+};
+
 const tableStyle: React.CSSProperties = {
   width: "100%",
   borderCollapse: "collapse",
@@ -720,7 +856,7 @@ const dividerRowStyle: React.CSSProperties = {
 };
 
 const pastEventRowStyle: React.CSSProperties = {
-  backgroundColor: "#f3f4f6",
+  backgroundColor: "#c1c2c3",
 };
 
 const root = document.getElementById("root");
