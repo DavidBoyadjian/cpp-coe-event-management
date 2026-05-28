@@ -15,7 +15,7 @@ function App() {
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
   const [host, setHost] = useState("");
-  const [audience, setAudience] = useState("");
+  const [audience, setAudience] = useState<string[]>([]);
   const [roomReserved, setRoomReserved] = useState(false);
   const [cateringNeeded, setCateringNeeded] = useState(false);
   const [cateringOrdered, setCateringOrdered] = useState(false);
@@ -63,12 +63,20 @@ function App() {
     setDate("");
     setLocation("");
     setHost("");
-    setAudience("");
+    setAudience([]);
     setRoomReserved(false);
     setCateringNeeded(false);
     setCateringOrdered(false);
     setStatus("");
     setDescription("");
+  };
+
+  const handleAudienceChange = (value: string) => {
+    setAudience((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
   };
 
   const clearFilters = () => {
@@ -127,7 +135,7 @@ function App() {
     const matchesHost = hostFilter === "" || event.host === hostFilter;
 
     const matchesAudience =
-      audienceFilter === "" || event.audience === audienceFilter;
+      audienceFilter === "" || (event.audience ?? "").includes(audienceFilter);
 
     const matchesRoom =
       roomFilter === "" ||
@@ -182,7 +190,7 @@ function App() {
       date,
       location,
       host,
-      audience,
+      audience: audience.join(", "),
       roomReserved,
       cateringNeeded,
       cateringOrdered,
@@ -220,7 +228,7 @@ function App() {
     setDate(event.date);
     setLocation(event.location ?? "");
     setHost(event.host ?? "");
-    setAudience(event.audience ?? "");
+    setAudience(event.audience ? event.audience.split(", ").filter(Boolean) : []);
     setRoomReserved(event.roomReserved ?? false);
     setCateringNeeded(event.cateringNeeded ?? false);
     setCateringOrdered(event.cateringOrdered ?? false);
@@ -349,18 +357,54 @@ function App() {
               <option value="Other">Other</option>
             </select>
 
-            <select
-              style={inputStyle}
-              value={audience}
-              onChange={(e) => setAudience(e.target.value)}
-            >
-              <option value="">Select Audience</option>
-              <option value="Students">Students</option>
-              <option value="SAB">SAB</option>
-              <option value="DLB">DLB</option>
-              <option value="Faculty/Staff">Faculty/Staff</option>
-              <option value="Other">Other</option>
-            </select>
+            <div style={audienceBoxStyle}>
+              <strong>Audience</strong>
+
+              <label>
+                <input
+                  type="checkbox"
+                  checked={audience.includes("Students")}
+                  onChange={() => handleAudienceChange("Students")}
+                />
+                Students
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  checked={audience.includes("SAB")}
+                  onChange={() => handleAudienceChange("SAB")}
+                />
+                SAB
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  checked={audience.includes("DLB")}
+                  onChange={() => handleAudienceChange("DLB")}
+                />
+                DLB
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  checked={audience.includes("Faculty/Staff")}
+                  onChange={() => handleAudienceChange("Faculty/Staff")}
+                />
+                Faculty/Staff
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  checked={audience.includes("Other")}
+                  onChange={() => handleAudienceChange("Other")}
+                />
+                Other
+              </label>
+            </div>
 
             <input
               style={inputStyle}
@@ -725,6 +769,15 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid #c7c7c7",
 };
 
+const audienceBoxStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "6px",
+  padding: "10px",
+  border: "1px solid #c7c7c7",
+  borderRadius: "8px",
+};
+
 const checkboxRowStyle: React.CSSProperties = {
   display: "flex",
   gap: "20px",
@@ -856,7 +909,7 @@ const dividerRowStyle: React.CSSProperties = {
 };
 
 const pastEventRowStyle: React.CSSProperties = {
-  backgroundColor: "#d0d2d3",
+  backgroundColor: "#c3c4c8",
 };
 
 const root = document.getElementById("root");
