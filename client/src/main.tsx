@@ -97,6 +97,57 @@ function App() {
     setCateringOrderedFilter("");
   };
 
+  const downloadFilteredEventsCSV = () => {
+    const headers = [
+      "Date",
+      "Event",
+      "Days Left",
+      "Location",
+      "Host",
+      "Audience",
+      "Room Reserved",
+      "Catering Needed",
+      "Catering Ordered",
+      "Status",
+      "Description",
+    ];
+
+    const rows = filteredEvents.map((event) => [
+      formatDate(event.date),
+      event.eventName,
+      getDaysAway(event.date),
+      event.location || "-",
+      event.host || "-",
+      event.audience || "-",
+      event.roomReserved ? "Yes" : "No",
+      event.cateringNeeded ? "Yes" : "No",
+      event.cateringNeeded ? (event.cateringOrdered ? "Yes" : "No") : "-",
+      event.status || "-",
+      event.description || "-",
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map((row) =>
+        row
+          .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
+          .join(",")
+      )
+      .join("\n");
+
+    const blob = new Blob([csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "filtered-events.csv";
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };  
+
   const getDaysAway = (eventDate: string) => {
     const today = new Date();
     const event = new Date(eventDate + "T00:00:00");
@@ -599,6 +650,13 @@ function App() {
           Showing {filteredEvents.length} of {events.length} events
         </p>
 
+        <button
+          style={downloadButtonStyle}
+          onClick={downloadFilteredEventsCSV}
+        >
+          Download Filtered Events
+        </button>
+
         {loading ? (
           <p>Loading...</p>
         ) : (
@@ -991,6 +1049,17 @@ const deleteButtonStyle: React.CSSProperties = {
   backgroundColor: "white",
   borderRadius: "6px",
   cursor: "pointer",
+};
+
+const downloadButtonStyle: React.CSSProperties = {
+  backgroundColor: green,
+  color: "white",
+  border: "none",
+  padding: "10px 16px",
+  borderRadius: "8px",
+  cursor: "pointer",
+  fontWeight: 700,
+  marginBottom: "16px",
 };
 
 const dividerRowStyle: React.CSSProperties = {
