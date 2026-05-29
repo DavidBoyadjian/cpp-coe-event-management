@@ -489,7 +489,10 @@ function App() {
 
         <div style={filterBoxStyle}>
           <select
-            style={filterInputStyle}
+            style={{
+              ...filterInputStyle,
+              textAlignLast: "center",
+            }}
             value={hostFilter}
             onChange={(e) => setHostFilter(e.target.value)}
           >
@@ -549,7 +552,10 @@ function App() {
           </div>
 
           <select
-            style={filterInputStyle}
+            style={{
+              ...filterInputStyle,
+              textAlignLast: "center",
+            }}
             value={roomFilter}
             onChange={(e) => setRoomFilter(e.target.value)}
           >
@@ -559,7 +565,10 @@ function App() {
           </select>
 
           <select
-            style={filterInputStyle}
+            style={{
+              ...filterInputStyle,
+              textAlignLast: "center",
+            }}
             value={cateringNeededFilter}
             onChange={(e) => setCateringNeededFilter(e.target.value)}
           >
@@ -569,7 +578,10 @@ function App() {
           </select>
 
           <select
-            style={filterInputStyle}
+            style={{
+              ...filterInputStyle,
+              textAlignLast: "center",
+            }}
             value={cateringOrderedFilter}
             onChange={(e) => setCateringOrderedFilter(e.target.value)}
           >
@@ -908,6 +920,7 @@ const filterInputStyle: React.CSSProperties = {
   height: "100%",
   fontSize: "18px",
   fontWeight: 500,
+  textAlign: "center",
 };
 
 const filterAudienceBoxStyle: React.CSSProperties = {
