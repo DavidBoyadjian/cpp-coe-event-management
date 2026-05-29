@@ -17,6 +17,7 @@ router.get("/events", async (_req: Request, res: Response) => {
       catering_needed BOOLEAN DEFAULT false,
       catering_ordered BOOLEAN DEFAULT false,
       status TEXT,
+      room_confirmation TEXT,
       description TEXT
     );
   `);
@@ -24,6 +25,11 @@ router.get("/events", async (_req: Request, res: Response) => {
   await pool.query(`
     ALTER TABLE events
     ADD COLUMN IF NOT EXISTS audience TEXT;
+  `);
+
+  await pool.query(`
+    ALTER TABLE events
+    ADD COLUMN IF NOT EXISTS room_confirmation TEXT;
   `);
 
   const events = await pool.query(`
@@ -38,6 +44,7 @@ router.get("/events", async (_req: Request, res: Response) => {
       catering_needed AS "cateringNeeded",
       catering_ordered AS "cateringOrdered",
       status,
+      room_confirmation AS "roomConfirmation",
       description
     FROM events
     ORDER BY date ASC;
@@ -68,6 +75,7 @@ router.post("/events", async (req: Request, res: Response) => {
       catering_needed,
       catering_ordered,
       status,
+      room_confirmation,
       description
     )
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
@@ -95,6 +103,7 @@ router.post("/events", async (req: Request, res: Response) => {
       event.cateringNeeded,
       event.cateringOrdered,
       event.status,
+      event.roomConfirmation,
       event.description,
     ]
   );
@@ -119,8 +128,9 @@ router.put("/events/:id", async (req: Request, res: Response) => {
       catering_needed = $7,
       catering_ordered = $8,
       status = $9,
-      description = $10
-    WHERE id = $11
+      description = $10,
+      room_confirmation = $11
+    WHERE id = $12
     RETURNING 
       id,
       event_name AS "eventName",
@@ -144,6 +154,7 @@ router.put("/events/:id", async (req: Request, res: Response) => {
       event.cateringNeeded,
       event.cateringOrdered,
       event.status,
+      event.roomConfirmation,
       event.description,
       id,
     ]

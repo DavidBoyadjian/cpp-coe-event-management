@@ -20,6 +20,7 @@ function App() {
   const [cateringNeeded, setCateringNeeded] = useState(false);
   const [cateringOrdered, setCateringOrdered] = useState(false);
   const [status, setStatus] = useState("");
+  const [roomConfirmation, setRoomConfirmation] = useState("");
   const [description, setDescription] = useState("");
 
   const [hostFilter, setHostFilter] = useState("");
@@ -68,6 +69,7 @@ function App() {
     setCateringNeeded(false);
     setCateringOrdered(false);
     setStatus("");
+    setRoomConfirmation("");
     setDescription("");
   };
 
@@ -204,6 +206,7 @@ function App() {
       cateringNeeded,
       cateringOrdered,
       status,
+      roomConfirmation,
       description,
     };
 
@@ -242,6 +245,7 @@ function App() {
     setCateringNeeded(event.cateringNeeded ?? false);
     setCateringOrdered(event.cateringOrdered ?? false);
     setStatus(event.status ?? "");
+    setRoomConfirmation(event.roomConfirmation ?? "");
     setDescription(event.description ?? "");
   };
 
@@ -371,6 +375,13 @@ function App() {
               placeholder="Status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
+            />
+
+            <input
+              style={inputStyle}
+              placeholder="Room Confirmation #"
+              value={roomConfirmation}
+              onChange={(e) => setRoomConfirmation(e.target.value)}
             />
 
             <div style={audienceBoxStyle}>
@@ -592,6 +603,7 @@ function App() {
                 <th style={thStyle}>Catering Needed</th>
                 <th style={thStyle}>Catering Ordered</th>
                 <th style={thStyle}>Status</th>
+                <th style={thStyle}>Room Confirmation #</th>
                 <th style={thStyle}>Description</th>
                 <th style={thStyle}>Actions</th>
               </tr>
@@ -620,6 +632,7 @@ function App() {
                     <td style={tdStyle}>{getDaysAway(e.date)}</td>
                     <td style={tdStyle}>{e.location || "-"}</td>
                     <td style={tdStyle}>{e.host || "-"}</td>
+                    <td style={tdStyle}>{e.roomConfirmation || "-"}</td>
                     <td style={tdStyle}>{e.audience || "-"}</td>
 
                     <td

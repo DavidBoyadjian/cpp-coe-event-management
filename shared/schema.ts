@@ -13,5 +13,6 @@ export type EventItem = {
   accountNumber?: string;
   host?: string;
   status?: string;
+  roomConfirmation?: string;
   description?: string;
 };
