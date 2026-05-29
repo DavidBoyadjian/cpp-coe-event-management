@@ -366,6 +366,13 @@ function App() {
               <option value="Other">Other</option>
             </select>
 
+            <input
+              style={inputStyle}
+              placeholder="Status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            />
+
             <div style={audienceBoxStyle}>
               <strong>Audience</strong>
 
@@ -414,13 +421,6 @@ function App() {
                 Other
               </label>
             </div>
-
-            <input
-              style={inputStyle}
-              placeholder="Status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            />
 
             <input
               style={inputStyle}
