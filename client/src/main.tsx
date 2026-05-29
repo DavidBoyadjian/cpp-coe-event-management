@@ -422,7 +422,7 @@ function App() {
               onChange={(e) => setStatus(e.target.value)}
             />
 
-            <textarea
+            <input
               style={inputStyle}
               placeholder="Description"
               value={description}
@@ -960,15 +960,6 @@ const deleteButtonStyle: React.CSSProperties = {
 
 const dividerRowStyle: React.CSSProperties = {
   borderTop: `6px solid ${gold}`,
-};
-
-const descriptionStyle: React.CSSProperties = {
-  padding: "11px",
-  borderRadius: "8px",
-  border: "1px solid #c7c7c7",
-  minHeight: "120px",
-  resize: "vertical",
-  fontFamily: "Arial, sans-serif",
 };
 
 const pastEventRowStyle: React.CSSProperties = {
