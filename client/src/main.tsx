@@ -905,15 +905,20 @@ const filterInputStyle: React.CSSProperties = {
   padding: "10px",
   borderRadius: "8px",
   border: "1px solid #c7c7c7",
+  height: "100%",
+  fontSize: "18px",
+  fontWeight: 500,
 };
 
 const filterAudienceBoxStyle: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
-  gap: "6px",
-  padding: "10px",
+  justifyContent: "center",
+  gap: "8px",
+  padding: "14px",
   border: "1px solid #c7c7c7",
   borderRadius: "8px",
+  fontSize: "18px",
 };
 
 const clearFilterButtonStyle: React.CSSProperties = {
@@ -924,6 +929,10 @@ const clearFilterButtonStyle: React.CSSProperties = {
   borderRadius: "8px",
   cursor: "pointer",
   fontWeight: 700,
+  fontSize: "18px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 };
 
 const filterCountStyle: React.CSSProperties = {
