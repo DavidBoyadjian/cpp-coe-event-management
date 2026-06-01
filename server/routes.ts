@@ -78,7 +78,7 @@ router.post("/events", async (req: Request, res: Response) => {
       room_confirmation,
       description
     )
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
     RETURNING 
       id,
       event_name AS "eventName",
@@ -90,6 +90,7 @@ router.post("/events", async (req: Request, res: Response) => {
       catering_needed AS "cateringNeeded",
       catering_ordered AS "cateringOrdered",
       status,
+      room_confirmation AS "roomConfirmation",
       description;
     `,
     [
@@ -105,6 +106,7 @@ router.post("/events", async (req: Request, res: Response) => {
       event.status,
       event.roomConfirmation,
       event.description,
+      
     ]
   );
 
@@ -142,6 +144,7 @@ router.put("/events/:id", async (req: Request, res: Response) => {
       catering_needed AS "cateringNeeded",
       catering_ordered AS "cateringOrdered",
       status,
+      room_confirmation AS "roomConfirmation",
       description;
     `,
     [
@@ -154,8 +157,8 @@ router.put("/events/:id", async (req: Request, res: Response) => {
       event.cateringNeeded,
       event.cateringOrdered,
       event.status,
-      event.roomConfirmation,
       event.description,
+      event.roomConfirmation,
       id,
     ]
   );
