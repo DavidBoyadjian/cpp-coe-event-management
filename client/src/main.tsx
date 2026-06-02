@@ -192,6 +192,27 @@ function App() {
     return eventDate.getTime() < today.getTime();
   };
 
+  const getHostRowStyle = (host?: string): React.CSSProperties => {
+    if (
+      host === "CoE" ||
+      host === "DLB" ||
+      host === "Associate Dean" ||
+      host === "Faculty"
+    ) {
+      return { backgroundColor: "#dcfce7" };
+    }
+
+    if (host === "ESC") {
+      return { backgroundColor: "#dbeafe" };
+    }
+
+    if (host === "University") {
+      return { backgroundColor: "#fef3c7" };
+    }
+
+    return {};
+  };
+
   const formatDate = (dateString: string) => {
     const formattedDate = new Date(dateString + "T00:00:00");
 
@@ -810,6 +831,7 @@ function App() {
                   <tr
                     key={e.id}
                     style={{
+                      ...getHostRowStyle(e.host),
                       ...(isPastEvent(e.date) ? pastEventRowStyle : {}),
                       ...(shouldShowDivider ? dividerRowStyle : {}),
                     }}
