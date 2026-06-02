@@ -210,6 +210,10 @@ function App() {
       return { backgroundColor: "#fef3c7" };
     }
 
+    if (host === "Holiday") {
+      return { backgroundColor: "#ede9fe" };
+    }
+
     return {};
   };
 
@@ -487,6 +491,7 @@ function App() {
               <option value="Faculty">Faculty</option>
               <option value="ESC">ESC</option>
               <option value="University">University</option>
+              <option value="Holiday">Holiday</option>
               <option value="Other">Other</option>
             </select>
 
@@ -637,6 +642,7 @@ function App() {
             <option value="Faculty">Faculty</option>
             <option value="ESC">ESC</option>
             <option value="University">University</option>
+            <option value="Holiday">Holiday</option>
             <option value="Other">Other</option>
           </select>
 
