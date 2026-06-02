@@ -440,6 +440,10 @@ function App() {
               <option value="">Select Host</option>
               <option value="CoE">CoE</option>
               <option value="DLB">DLB</option>
+              <option value="Associate Dean">Associate Dean</option>
+              <option value="Faculty">Faculty</option>
+              <option value="ESC">ESC</option>
+              <option value="University">University</option>
               <option value="Other">Other</option>
             </select>
 
@@ -586,6 +590,10 @@ function App() {
             <option value="">All Hosts</option>
             <option value="CoE">CoE</option>
             <option value="DLB">DLB</option>
+            <option value="Associate Dean">Associate Dean</option>
+            <option value="Faculty">Faculty</option>
+            <option value="ESC">ESC</option>
+            <option value="University">University</option>
             <option value="Other">Other</option>
           </select>
 
