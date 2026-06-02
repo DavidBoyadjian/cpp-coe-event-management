@@ -120,7 +120,7 @@ function App() {
       "Catering Needed",
       "Catering Ordered",
       "Status",
-      "Description",
+      "Notes",
     ];
 
     const rows = filteredEvents.map((event) => [
@@ -522,7 +522,7 @@ function App() {
 
             <input
               style={inputStyle}
-              placeholder="Description"
+              placeholder="Notes"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -759,7 +759,7 @@ function App() {
                 <th style={thStyle}>Catering Ordered</th>
                 <th style={thStyle}>Status</th>
                 <th style={thStyle}>Room Confirmation #</th>
-                <th style={thStyle}>Description</th>
+                <th style={thStyle}>Notes</th>
                 <th style={thStyle}>Actions</th>
               </tr>
             </thead>
