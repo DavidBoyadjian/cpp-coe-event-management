@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
 import type { EventItem } from "../../shared/schema";
 
@@ -28,6 +28,7 @@ function App() {
   const [roomFilter, setRoomFilter] = useState("");
   const [cateringNeededFilter, setCateringNeededFilter] = useState("");
   const [cateringOrderedFilter, setCateringOrderedFilter] = useState("");
+  const formRef = useRef<HTMLDivElement | null>(null);
 
   const todayLong = new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -298,6 +299,13 @@ function App() {
     setStatus(event.status ?? "");
     setRoomConfirmation(event.roomConfirmation ?? "");
     setDescription(event.description ?? "");
+
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 0);
   };
 
   const handleDeleteEvent = async (id: number) => {
@@ -383,7 +391,7 @@ function App() {
           )}
         </div>
 
-        <div style={cardStyle}>
+        <div style={cardStyle} ref={formRef}>
           <h2 style={sectionTitleStyle}>
             {editingId === null ? "Add Event" : "Edit Event"}
           </h2>
