@@ -429,12 +429,17 @@ function App() {
               <option value="Other">Other</option>
             </select>
 
-            <input
+            <select
               style={inputStyle}
-              placeholder="Status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-            />
+            >
+              <option value="">Select Status</option>
+              <option value="Not Started">Not Started</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Complete">Complete</option>
+              <option value="Tentative">Tentative</option>
+            </select>
 
             <input
               style={inputStyle}
