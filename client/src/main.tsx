@@ -134,8 +134,8 @@ function App() {
 
     const rows = filteredEvents.map((event) => [
       formatDate(event.date),
-      event.startTime || "-",
-      event.endTime || "-",
+      formatTime(event.startTime),
+      formatTime(event.endTime),
       event.eventName,
       getDaysAway(event.date),
       event.location || "-",
@@ -200,6 +200,22 @@ function App() {
     return Math.ceil(
       (event.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
     );
+  };
+
+  const formatTime = (time?: string) => {
+    if (!time) return "-";
+
+    const [hours, minutes] = time.split(":");
+    const date = new Date();
+
+    date.setHours(Number(hours));
+    date.setMinutes(Number(minutes));
+
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
   };
 
   const isPastEvent = (date: string) => {
@@ -887,8 +903,8 @@ function App() {
                   >
                     <td style={tdStyle}>{formatDate(e.date)}</td>
                     <td style={tdStyle}>{e.eventName}</td>
-                    <td style={tdStyle}>{e.startTime || "-"}</td>
-                    <td style={tdStyle}>{e.endTime || "-"}</td>
+                    <td style={tdStyle}>{formatTime(e.startTime)}</td>
+                    <td style={tdStyle}>{formatTime(e.endTime)}</td>
                     <td style={tdStyle}>{getDaysAway(e.date)}</td>
                     <td style={tdStyle}>{e.location || "-"}</td>
                     <td style={tdStyle}>{e.host || "-"}</td>
