@@ -10,6 +10,8 @@ router.get("/events", async (_req: Request, res: Response) => {
       id BIGINT PRIMARY KEY,
       event_name TEXT NOT NULL,
       date TEXT NOT NULL,
+      start_time TEXT,
+      end_time TEXT,
       location TEXT,
       host TEXT,
       audience TEXT,
@@ -32,11 +34,23 @@ router.get("/events", async (_req: Request, res: Response) => {
     ADD COLUMN IF NOT EXISTS room_confirmation TEXT;
   `);
 
+  await pool.query(`
+    ALTER TABLE events
+    ADD COLUMN IF NOT EXISTS start_time TEXT;
+  `);
+
+  await pool.query(`
+    ALTER TABLE events
+    ADD COLUMN IF NOT EXISTS end_time TEXT;
+  `);
+
   const events = await pool.query(`
     SELECT 
       id,
       event_name AS "eventName",
       date,
+      start_time AS "startTime",
+      end_time AS "endTime",
       location,
       host,
       audience,
@@ -68,6 +82,8 @@ router.post("/events", async (req: Request, res: Response) => {
       id,
       event_name,
       date,
+      start_time,
+      end_time,
       location,
       host,
       audience,
@@ -78,11 +94,13 @@ router.post("/events", async (req: Request, res: Response) => {
       room_confirmation,
       description
     )
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
     RETURNING 
       id,
       event_name AS "eventName",
       date,
+      start_time AS "startTime",
+      end_time AS "endTime",
       location,
       host,
       audience,
@@ -97,6 +115,8 @@ router.post("/events", async (req: Request, res: Response) => {
       event.id,
       event.eventName,
       event.date,
+      event.startTime,
+      event.endTime,
       event.location,
       event.host,
       event.audience,
@@ -123,20 +143,24 @@ router.put("/events/:id", async (req: Request, res: Response) => {
     SET
       event_name = $1,
       date = $2,
-      location = $3,
-      host = $4,
-      audience = $5,
-      room_reserved = $6,
-      catering_needed = $7,
-      catering_ordered = $8,
-      status = $9,
-      description = $10,
-      room_confirmation = $11
-    WHERE id = $12
+      start_time = $3,
+      end_time = $4,
+      location = $5,
+      host = $6,
+      audience = $7,
+      room_reserved = $8,
+      catering_needed = $9,
+      catering_ordered = $10,
+      status = $11,
+      description = $12,
+      room_confirmation = $13
+    WHERE id = $14
     RETURNING 
       id,
       event_name AS "eventName",
       date,
+      start_time AS "startTime",
+      end_time AS "endTime",
       location,
       host,
       audience,
@@ -150,6 +174,8 @@ router.put("/events/:id", async (req: Request, res: Response) => {
     [
       event.eventName,
       event.date,
+      event.startTime,
+      event.endTime,
       event.location,
       event.host,
       event.audience,

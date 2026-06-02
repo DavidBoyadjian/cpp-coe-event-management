@@ -15,4 +15,5 @@ export type EventItem = {
   status?: string;
   roomConfirmation?: string;
   description?: string;
+  
 };

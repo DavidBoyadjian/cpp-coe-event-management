@@ -13,6 +13,8 @@ function App() {
 
   const [eventName, setEventName] = useState("");
   const [date, setDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [location, setLocation] = useState("");
   const [host, setHost] = useState("");
   const [audience, setAudience] = useState<string[]>([]);
@@ -64,6 +66,8 @@ function App() {
     setEditingId(null);
     setEventName("");
     setDate("");
+    setStartTime("");
+    setEndTime("");
     setLocation("");
     setHost("");
     setAudience([]);
@@ -265,6 +269,8 @@ function App() {
       id: editingId ?? Date.now(),
       eventName,
       date,
+      startTime,
+      endTime,
       location,
       host,
       audience: audience.join(", "),
@@ -304,6 +310,8 @@ function App() {
     setEditingId(event.id);
     setEventName(event.eventName);
     setDate(event.date);
+    setStartTime(event.startTime ?? "");
+    setEndTime(event.endTime ?? "");
     setLocation(event.location ?? "");
     setHost(event.host ?? "");
     setAudience(event.audience ? event.audience.split(", ").filter(Boolean) : []);
@@ -423,6 +431,20 @@ function App() {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
+            />
+
+            <input
+              style={inputStyle}
+              type="time"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+            />
+
+            <input
+              style={inputStyle}
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
             />
 
             <input
@@ -758,6 +780,8 @@ function App() {
               <tr>
                 <th style={thStyle}>Date</th>
                 <th style={thStyle}>Event</th>
+                <th style={thStyle}>Start Time</th>
+                <th style={thStyle}>End Time</th>
                 <th style={thStyle}>Days Left</th>
                 <th style={thStyle}>Location</th>
                 <th style={thStyle}>Host</th>
@@ -792,6 +816,8 @@ function App() {
                   >
                     <td style={tdStyle}>{formatDate(e.date)}</td>
                     <td style={tdStyle}>{e.eventName}</td>
+                    <td style={tdStyle}>{e.startTime || "-"}</td>
+                    <td style={tdStyle}>{e.endTime || "-"}</td>
                     <td style={tdStyle}>{getDaysAway(e.date)}</td>
                     <td style={tdStyle}>{e.location || "-"}</td>
                     <td style={tdStyle}>{e.host || "-"}</td>
