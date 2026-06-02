@@ -495,10 +495,19 @@ function App() {
               <label>
                 <input
                   type="checkbox"
-                  checked={audience.includes("Faculty/Staff")}
-                  onChange={() => handleAudienceChange("Faculty/Staff")}
+                  checked={audience.includes("Faculty")}
+                  onChange={() => handleAudienceChange("Faculty")}
                 />
-                Faculty/Staff
+                Faculty
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  checked={audience.includes("Staff")}
+                  onChange={() => handleAudienceChange("Staff")}
+                />
+                Staff
               </label>
 
               <label>
@@ -613,10 +622,19 @@ function App() {
             <label>
               <input
                 type="checkbox"
-                checked={audienceFilter.includes("Faculty/Staff")}
-                onChange={() => handleAudienceFilterChange("Faculty/Staff")}
+                checked={audienceFilter.includes("Faculty")}
+                onChange={() => handleAudienceFilterChange("Faculty")}
               />
-              Faculty/Staff
+              Faculty
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={audienceFilter.includes("Staff")}
+                onChange={() => handleAudienceFilterChange("Staff")}
+              />
+              Staff
             </label>
 
             <label>
