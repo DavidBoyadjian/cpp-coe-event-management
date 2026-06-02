@@ -768,10 +768,8 @@ function App() {
                     <td style={tdStyle}>{e.eventName}</td>
                     <td style={tdStyle}>{getDaysAway(e.date)}</td>
                     <td style={tdStyle}>{e.location || "-"}</td>
-                    <td style={tdStyle}>{e.host || "-"}</td>                    
+                    <td style={tdStyle}>{e.host || "-"}</td>
                     <td style={tdStyle}>{e.audience || "-"}</td>
-                    <td style={tdStyle}>{e.status || "-"}</td>
-                    <td style={tdStyle}>{e.roomConfirmation || "-"}</td>
 
                     <td
                       style={{
@@ -804,14 +802,11 @@ function App() {
                         fontWeight: 700,
                       }}
                     >
-                      {e.cateringNeeded
-                        ? e.cateringOrdered
-                          ? "Yes"
-                          : "No"
-                        : "-"}
+                      {e.cateringNeeded ? (e.cateringOrdered ? "Yes" : "No") : "-"}
                     </td>
 
                     <td style={tdStyle}>{e.status || "-"}</td>
+                    <td style={tdStyle}>{e.roomConfirmation || "-"}</td>
                     <td style={tdStyle}>{e.description || "-"}</td>
 
                     <td style={tdStyle}>
