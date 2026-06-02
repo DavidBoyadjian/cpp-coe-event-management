@@ -25,6 +25,7 @@ function App() {
 
   const [hostFilter, setHostFilter] = useState("");
   const [audienceFilter, setAudienceFilter] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [roomFilter, setRoomFilter] = useState("");
   const [cateringNeededFilter, setCateringNeededFilter] = useState("");
   const [cateringOrderedFilter, setCateringOrderedFilter] = useState("");
@@ -90,9 +91,18 @@ function App() {
     );
   };
 
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
+  };
+
   const clearFilters = () => {
     setHostFilter("");
     setAudienceFilter([]);
+    setStatusFilter([]);
     setRoomFilter("");
     setCateringNeededFilter("");
     setCateringOrderedFilter("");
@@ -194,6 +204,9 @@ function App() {
   );
 
   const filteredEvents = sortedEvents.filter((event) => {
+    const matchesStatus =
+      statusFilter.length === 0 ||
+      statusFilter.some((item) => event.status === item);
     const matchesHost = hostFilter === "" || event.host === hostFilter;
 
     const matchesAudience =
@@ -218,6 +231,7 @@ function App() {
     return (
       matchesHost &&
       matchesAudience &&
+      matchesStatus &&
       matchesRoom &&
       matchesCateringNeeded &&
       matchesCateringOrdered
@@ -615,6 +629,46 @@ function App() {
             </label>
           </div>
 
+          <div style={filterAudienceBoxStyle}>
+            <strong>Status Filter</strong>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={statusFilter.includes("Not Started")}
+                onChange={() => handleStatusFilterChange("Not Started")}
+              />
+              Not Started
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={statusFilter.includes("In Progress")}
+                onChange={() => handleStatusFilterChange("In Progress")}
+              />
+              In Progress
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={statusFilter.includes("Complete")}
+                onChange={() => handleStatusFilterChange("Complete")}
+              />
+              Complete
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={statusFilter.includes("Tentative")}
+                onChange={() => handleStatusFilterChange("Tentative")}
+              />
+              Tentative
+            </label>
+          </div>
+
           <select
             style={{
               ...filterInputStyle,
@@ -714,9 +768,10 @@ function App() {
                     <td style={tdStyle}>{e.eventName}</td>
                     <td style={tdStyle}>{getDaysAway(e.date)}</td>
                     <td style={tdStyle}>{e.location || "-"}</td>
-                    <td style={tdStyle}>{e.host || "-"}</td>
-                    <td style={tdStyle}>{e.roomConfirmation || "-"}</td>
+                    <td style={tdStyle}>{e.host || "-"}</td>                    
                     <td style={tdStyle}>{e.audience || "-"}</td>
+                    <td style={tdStyle}>{e.status || "-"}</td>
+                    <td style={tdStyle}>{e.roomConfirmation || "-"}</td>
 
                     <td
                       style={{
@@ -979,7 +1034,7 @@ const emptyTextStyle: React.CSSProperties = {
 
 const filterBoxStyle: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(6, minmax(160px, 1fr))",
+  gridTemplateColumns: "repeat(7, minmax(160px, 1fr))",
   gap: "12px",
   marginBottom: "12px",
 };
