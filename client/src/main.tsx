@@ -13,6 +13,7 @@ function App() {
 
   const [eventName, setEventName] = useState("");
   const [date, setDate] = useState("");
+  const [dateRangeFilter, setDateRangeFilter] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [location, setLocation] = useState("");
@@ -110,11 +111,14 @@ function App() {
     setRoomFilter("");
     setCateringNeededFilter("");
     setCateringOrderedFilter("");
+    setDateRangeFilter("");
   };
 
   const downloadFilteredEventsCSV = () => {
     const headers = [
       "Date",
+      "Start Time",
+      "End Time",
       "Event",
       "Days Left",
       "Location",
@@ -124,11 +128,14 @@ function App() {
       "Catering Needed",
       "Catering Ordered",
       "Status",
+      "Room Confirmation #",
       "Notes",
     ];
 
     const rows = filteredEvents.map((event) => [
       formatDate(event.date),
+      event.startTime || "-",
+      event.endTime || "-",
       event.eventName,
       getDaysAway(event.date),
       event.location || "-",
@@ -138,6 +145,7 @@ function App() {
       event.cateringNeeded ? "Yes" : "No",
       event.cateringNeeded ? (event.cateringOrdered ? "Yes" : "No") : "-",
       event.status || "-",
+      event.roomConfirmation || "-",
       event.description || "-",
     ]);
 
@@ -180,6 +188,18 @@ function App() {
     if (days === 1) return "1 day";
 
     return `${days} days`;
+  };
+
+  const getDaysNumber = (eventDate: string) => {
+    const today = new Date();
+    const event = new Date(eventDate + "T00:00:00");
+
+    today.setHours(0, 0, 0, 0);
+    event.setHours(0, 0, 0, 0);
+
+    return Math.ceil(
+      (event.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
   };
 
   const isPastEvent = (date: string) => {
@@ -257,13 +277,22 @@ function App() {
       (cateringOrderedFilter === "yes" && event.cateringOrdered === true) ||
       (cateringOrderedFilter === "no" && event.cateringOrdered !== true);
 
+     const daysAway = getDaysNumber(event.date);
+
+    const matchesDateRange =
+      dateRangeFilter === "" ||
+      (dateRangeFilter === "30" && daysAway >= 0 && daysAway <= 30) ||
+      (dateRangeFilter === "60" && daysAway >= 0 && daysAway <= 60) ||
+      (dateRangeFilter === "90" && daysAway >= 0 && daysAway <= 90); 
+
     return (
       matchesHost &&
       matchesAudience &&
       matchesStatus &&
       matchesRoom &&
       matchesCateringNeeded &&
-      matchesCateringOrdered
+      matchesCateringOrdered &&
+      matchesDateRange
     );
   });
 
@@ -749,6 +778,20 @@ function App() {
               ...filterInputStyle,
               textAlignLast: "center",
             }}
+            value={dateRangeFilter}
+            onChange={(e) => setDateRangeFilter(e.target.value)}
+          >
+            <option value="">All Dates</option>
+            <option value="30">Next 30 Days</option>
+            <option value="60">Next 60 Days</option>
+            <option value="90">Next 90 Days</option>
+          </select>
+
+          <select
+            style={{
+              ...filterInputStyle,
+              textAlignLast: "center",
+            }}
             value={roomFilter}
             onChange={(e) => setRoomFilter(e.target.value)}
           >
@@ -1109,7 +1152,7 @@ const emptyTextStyle: React.CSSProperties = {
 
 const filterBoxStyle: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(7, minmax(160px, 1fr))",
+  gridTemplateColumns: "repeat(8, minmax(160px, 1fr))",
   gap: "12px",
   marginBottom: "12px",
 };
