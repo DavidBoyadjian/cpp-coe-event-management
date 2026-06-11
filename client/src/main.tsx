@@ -26,7 +26,7 @@ function App() {
   const [roomConfirmation, setRoomConfirmation] = useState("");
   const [description, setDescription] = useState("");
 
-  const [hostFilter, setHostFilter] = useState("");
+  const [hostFilter, setHostFilter] = useState<string[]>([]);
   const [audienceFilter, setAudienceFilter] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [roomFilter, setRoomFilter] = useState("");
@@ -104,8 +104,16 @@ function App() {
     );
   };
 
+  const handleHostFilterChange = (value: string) => {
+    setHostFilter((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
+  };
+
   const clearFilters = () => {
-    setHostFilter("");
+    setHostFilter([]);
     setAudienceFilter([]);
     setStatusFilter([]);
     setRoomFilter("");
@@ -272,7 +280,9 @@ function App() {
     const matchesStatus =
       statusFilter.length === 0 ||
       statusFilter.some((item) => event.status === item);
-    const matchesHost = hostFilter === "" || event.host === hostFilter;
+    const matchesHost =
+      hostFilter.length === 0 ||
+      hostFilter.some((item) => event.host === item);
 
     const matchesAudience =
       audienceFilter.length === 0 ||
@@ -672,24 +682,22 @@ function App() {
         <h2 style={sectionTitleStyle}>All Events</h2>
 
         <div style={filterBoxStyle}>
-          <select
-            style={{
-              ...filterInputStyle,
-              textAlignLast: "center",
-            }}
-            value={hostFilter}
-            onChange={(e) => setHostFilter(e.target.value)}
-          >
-            <option value="">All Hosts</option>
-            <option value="CoE">CoE</option>
-            <option value="DLB">DLB</option>
-            <option value="Associate Dean">Associate Dean</option>
-            <option value="Faculty">Faculty</option>
-            <option value="ESC">ESC</option>
-            <option value="University">University</option>
-            <option value="Holiday">Holiday</option>
-            <option value="Other">Other</option>
-          </select>
+          <div style={filterAudienceBoxStyle}>
+            <strong>Host Filter</strong>
+
+            {["CoE", "DLB", "Associate Dean", "Faculty", "ESC", "University", "Holiday", "Other"].map(
+              (hostOption) => (
+                <label key={hostOption}>
+                  <input
+                    type="checkbox"
+                    checked={hostFilter.includes(hostOption)}
+                    onChange={() => handleHostFilterChange(hostOption)}
+                  />
+                  {hostOption}
+                </label>
+              )
+            )}
+          </div>
 
           <div style={filterAudienceBoxStyle}>
             <strong>Audience Filter</strong>
